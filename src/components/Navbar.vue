@@ -6,7 +6,7 @@
           <Expand />
         </el-icon>
       </el-button>
-      <p class="page-title">导航栏</p>
+      <p class="page-title">{{ route.meta.title }}</p>
     </div>
     <div class="flex-box">
       <el-dropdown @command="handleCommand">
@@ -24,14 +24,37 @@
     </div>
   </div>
 </template>
-
 <script setup>
-import { useAdminStore } from '@/stores/admin'
+import { useAdminStore} from '@/stores/admin'
+import { logout } from '@/api/admin'
 import { ref } from 'vue'
+import {useRouter,useRoute} from 'vue-router'
+import {ElMessageBox} from 'element-plus'
+const router = useRouter()
+const route = useRoute()
 const handleCommand = (command) => {
   console.log(command)
   if(command==='logout'){
     //处理登出登录的逻辑
+    ElMessageBox.confirm('确定退出登录吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      //确定登录退出
+      logout().then(()=>{
+        //清除缓存,保存的token信息
+        localStorage.removeItem('token')
+        // 清除本地存储中的用户信息
+        localStorage.removeItem('userInfo')
+        // 清除本地存储中的角色信息
+        localStorage.removeItem('role')
+        // 登出成功
+        router.push('/auth/login')
+      })
+    }).catch(() => {
+      // 取消退出登录
+    })
   }
   console.log(command)
 }

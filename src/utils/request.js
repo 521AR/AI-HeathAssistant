@@ -34,6 +34,7 @@ service.interceptors.response.use(
     (response) => {
         //响应数据做点什么
         const{data,config}=response
+        console.log('响应拦截器收到数据:', data)
         //处理业务状态码
         if(data.code==='200'){
             return data.data
@@ -50,14 +51,18 @@ service.interceptors.response.use(
                     window.location.href = '/auth/login'
                 }else{
                     ElMessage.error(data.msg||'登录过期，请重新登录！')
-                    return Promise.reject('网络请求失败.....')
+                    return Promise.reject(data)
                 }
+            } else {
+                // 其他错误，返回错误信息
+                console.log('业务错误:', data)
+                return Promise.reject(data)
             }
         }
-        return response
     },
     //响应错误做点什么
     (error) => {
+        console.error('网络请求错误:', error)
         ElMessage.error('网络请求失败')
         return Promise.reject(error)
     }
