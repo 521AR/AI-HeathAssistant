@@ -30,3 +30,7 @@ export const addEmotionDiary=(data)=>{
 export const getKnowLedgeList=params=>{
     return server.get('/knowledge/article/page',{params})
 }
+
+export const getKnowledgeDetail=(articleId)=>{
+    return server.get(`/knowledge/article/${articleId}`)
+}
